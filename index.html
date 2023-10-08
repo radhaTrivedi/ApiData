@@ -1,0 +1,74 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <style>
+        .loading{
+            padding: 10px;
+            margin-left: auto;
+            margin-right: auto;
+            margin-top: 250px;
+            width: 170px;
+            height: 170px;
+            border-radius: 50%;
+            border-top: 5px solid black;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0%{
+                transform: rotate(0deg);
+            }
+            100%{
+                transform: rotate(360deg);
+            }
+        }
+        #image{
+            filter: grayscale(0%);
+            border-radius: 50%;
+        }
+        #image:hover{
+            filter: grayscale(100%);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="loading" id="loading">
+    </div>
+    <div class="container-fluid">
+        <div id="main" class="row" style="margin-left: 150px;"></div>
+    </div>
+    <script>
+        
+        let main=document.getElementById('main');
+        let loading=document.getElementById('loading');
+        let x;
+        let load = new XMLHttpRequest();
+        load.open('GET', 'https://api.github.com/users', true);
+        load.onprogress = function () {
+            console.log("Data is in progress");
+        }
+        load.onload = function () {
+            let data = JSON.parse(this.responseText);
+            setTimeout(()=>{
+                loading.style.display="none"
+                let loaddata=data.map((item,index) => {
+                return `
+                <div class="col-sm-12 col-md-2 col-lg-2" style="width:350px;border: 1px solid black;text-align: center; padding: 20px;border-radius: 20px; margin-bottom:20px;margin-left:10px">
+                    <h3 id="login">Login : ${item.login}</h3>
+                    <h3 id="id">ID : ${item.id}</h3>
+                    <img src=${item.avatar_url} id="image" height="200" width="200" alt="">
+                        <br>
+                </div>`
+            })
+            main.innerHTML=loaddata;    
+            },2000);
+            console.log(data);     
+        }
+        load.send();
+    </script>
+</body>
+
+</html>
